@@ -30,7 +30,7 @@ class ControllerApiCategory extends Controller
             }
 
             $json['status'] = "success";
-            $json['orders'] = $categories_info;
+            $json['orders'] = $categories;
         }
 
         $this->response->addHeader('Content-Type: application/json');
