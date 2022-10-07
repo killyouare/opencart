@@ -392,11 +392,4 @@ class ModelCheckoutOrder extends Model
 			$this->cache->delete('product');
 		}
 	}
-
-	public function getOrderByCustomerId($customer_id)
-	{
-		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` as `o` LEFT JOIN `" . DB_PREFIX . "order_product` as `os` ON `o`.`order_id` = `os`.`order_id` WHERE customer_id = '" . (int)$customer_id . "'");
-
-		return $query->rows;
-	}
 }
