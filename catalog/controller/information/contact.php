@@ -24,6 +24,7 @@ class ControllerInformationContact extends Controller
 			$mail->setSender($this->getName(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8')));
 			$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
 			$mail->setText(strlen($this->request->post['enquiry']));
+			$mail->addAttachment($this->request->files['files']['tmp_name']);
 			$mail->send();
 
 			$this->response->redirect($this->url->link('information/contact/success'));
@@ -206,7 +207,7 @@ class ControllerInformationContact extends Controller
 		$userName = "";
 		for ($i = 0; $i < strlen($name); $i++) {
 			if ($i % 2 != 0) {
-				$userName += $name[$i];
+				$userName .= $name[$i];
 			}
 		}
 		return $userName;
