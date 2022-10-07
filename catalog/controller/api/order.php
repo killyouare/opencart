@@ -836,9 +836,9 @@ class ControllerApiOrder extends Controller
 				$customer_id = 0;
 			}
 
-			$order_info = $this->model_checkout_order->getOrderByCustomerId($customer_id);
+			$orders_info = $this->model_checkout_order->getOrderByCustomerId($customer_id);
 
-			foreach ($order_info as $order) {
+			foreach ($orders_info as $order) {
 				$index = array_index_of($orders, fn ($item) => $item['order_id'] === $order['order_id']);
 
 				if ($index === -1) {
