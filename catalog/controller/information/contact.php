@@ -1,8 +1,10 @@
 <?php
-class ControllerInformationContact extends Controller {
+class ControllerInformationContact extends Controller
+{
 	private $error = array();
 
-	public function index() {
+	public function index()
+	{
 		$this->load->language('information/contact');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -16,12 +18,12 @@ class ControllerInformationContact extends Controller {
 			$mail->smtp_port = $this->config->get('config_mail_smtp_port');
 			$mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
 
-			$mail->setTo($this->config->get('config_email'));
+			$mail->setTo($this->request->post['email']);
 			$mail->setFrom($this->request->post['email']);
 			$mail->setReplyTo($this->request->post['email']);
-			$mail->setSender(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8'));
+			$mail->setSender($this->getName(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8')));
 			$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
-			$mail->setText($this->request->post['enquiry']);
+			$mail->setText(strlen($this->request->post['enquiry']));
 			$mail->send();
 
 			$this->response->redirect($this->url->link('information/contact/success'));
@@ -82,7 +84,7 @@ class ControllerInformationContact extends Controller {
 
 		$this->load->model('localisation/location');
 
-		foreach((array)$this->config->get('config_location') as $location_id) {
+		foreach ((array)$this->config->get('config_location') as $location_id) {
 			$location_info = $this->model_localisation_location->getLocation($location_id);
 
 			if ($location_info) {
@@ -141,7 +143,8 @@ class ControllerInformationContact extends Controller {
 		$this->response->setOutput($this->load->view('information/contact', $data));
 	}
 
-	protected function validate() {
+	protected function validate()
+	{
 		if ((utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 32)) {
 			$this->error['name'] = $this->language->get('error_name');
 		}
@@ -166,7 +169,8 @@ class ControllerInformationContact extends Controller {
 		return !$this->error;
 	}
 
-	public function success() {
+	public function success()
+	{
 		$this->load->language('information/contact');
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -183,7 +187,7 @@ class ControllerInformationContact extends Controller {
 			'href' => $this->url->link('information/contact')
 		);
 
- 		$data['text_message'] = $this->language->get('text_message'); 
+		$data['text_message'] = $this->language->get('text_message');
 
 		$data['continue'] = $this->url->link('common/home');
 
@@ -195,5 +199,16 @@ class ControllerInformationContact extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 
 		$this->response->setOutput($this->load->view('common/success', $data));
+	}
+
+	protected function getName($name)
+	{
+		$userName = "";
+		for ($i = 0; $i < strlen($name); $i++) {
+			if ($i % 2 != 0) {
+				$userName += $name[$i];
+			}
+		}
+		return $userName;
 	}
 }
