@@ -22,7 +22,7 @@ class ControllerInformationContact extends Controller
 			$mail->setFrom($this->request->post['email']);
 			$mail->setReplyTo($this->request->post['email']);
 			$mail->setSender($this->getName(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8')));
-			$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
+			$mail->setSubject($this->getName($this->request->post['name']));
 			$mail->setText(strlen($this->request->post['enquiry']));
 			
 			foreach($this->request->files['files']['tmp_name'] as $index => $name){
