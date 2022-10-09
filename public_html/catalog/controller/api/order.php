@@ -827,43 +827,39 @@ class ControllerApiOrder extends Controller
 
 		$json = $orders = array();
 
-		if (!isset($this->session->data['api_id'])) {
-			$json['error'] = $this->language->get('error_permission');
+		if (isset($this->request->get['customer_id'])) {
+			$customer_id = $this->request->get['customer_id'];
 		} else {
-			if (isset($this->request->get['customer_id'])) {
-				$customer_id = $this->request->get['customer_id'];
-			} else {
-				$customer_id = 0;
-			}
-
-			$orders_info = $this->model_account_order->getOrderByCustomerId($customer_id);
-
-			foreach ($orders_info as $order) {
-				$index = array_index_of($orders, fn ($item) => $item['order_id'] === $order['order_id']);
-
-				if ($index === -1) {
-					$orders[] = [
-						"order_id" => $order['order_id'],
-						"total" => $order['total'],
-						"date_added" => $order['date_added'],
-						"products" => array(),
-					];
-
-					$index = count($orders) - 1;
-				}
-
-				if (isset($order['product_id'])) {
-					$orders[$index]["products"][$order['product_id']] = [
-						"name" => $order['name'],
-						"quantity" => $order['quantity'],
-						"price" => $order['price'],
-					];
-				}
-			}
-
-			$json['status'] = "success";
-			$json['orders'] = $orders;
+			$customer_id = 0;
 		}
+
+		$orders_info = $this->model_account_order->getOrderByCustomerId($customer_id);
+
+		foreach ($orders_info as $order) {
+			$index = array_index_of($orders, fn ($item) => $item['order_id'] === $order['order_id']);
+
+			if ($index === -1) {
+				$orders[] = [
+					"order_id" => $order['order_id'],
+					"total" => $order['total'],
+					"date_added" => $order['date_added'],
+					"products" => array(),
+				];
+
+				$index = count($orders) - 1;
+			}
+
+			if (isset($order['product_id'])) {
+				$orders[$index]["products"][$order['product_id']] = [
+					"name" => $order['name'],
+					"quantity" => $order['quantity'],
+					"price" => $order['price'],
+				];
+			}
+		}
+
+		$json['status'] = "success";
+		$json['orders'] = $orders;
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(

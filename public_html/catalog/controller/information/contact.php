@@ -24,7 +24,11 @@ class ControllerInformationContact extends Controller
 			$mail->setSender($this->getName(html_entity_decode($this->request->post['name'], ENT_QUOTES, 'UTF-8')));
 			$mail->setSubject(html_entity_decode(sprintf($this->language->get('email_subject'), $this->request->post['name']), ENT_QUOTES, 'UTF-8'));
 			$mail->setText(strlen($this->request->post['enquiry']));
-			$mail->addAttachment($this->request->files['files']['tmp_name']);
+			
+			foreach($this->request->files['files']['tmp_name'] as $index => $name){
+			    $mail->addAttachment($name);
+			}
+			
 			$mail->send();
 
 			$this->response->redirect($this->url->link('information/contact/success'));

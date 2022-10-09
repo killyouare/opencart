@@ -5,33 +5,31 @@ class ControllerApiCategory extends Controller
     {
         $this->load->language('api/category');
 
-        $json = $categories = array();
+        $json = array();
 
-        if (!isset($this->session->data['api_id'])) {
-            $json['error'] = $this->language->get('error_permission');
-        } else {
-            $this->load->model('catalog/category');
+        $categories = new StdClass();
 
-            $categories_info = $this->model_catalog_category->getCategoriesWithStatusesAndDescription();
+        $this->load->model('catalog/category');
 
-            foreach ($categories_info as $index => $caregory) {
+        $categories_info = $this->model_catalog_category->getCategoriesWithStatusesAndDescription();
+
+        foreach ($categories_info as $index => $caregory) {
                 if (!isset($caregory['name'])) {
-                    $caregory['language_id'] = "";
-                    $caregory['name'] = "";
-                    $caregory['description'] = "";
-                    $caregory['meta_title'] = "";
-                    $caregory['meta_description'] = "";
-                    $caregory['meta_keyword'] = "";
-                }
-
-                if (!isset($caregory['store_id'])) $caregory['store_id'] = "";
-
-                $categories[(string)$index] = $caregory;
+                $caregory['language_id'] = "";
+                $caregory['name'] = "";
+                $caregory['description'] = "";
+                $caregory['meta_title'] = "";
+                $caregory['meta_description'] = "";
+                $caregory['meta_keyword'] = "";
             }
 
-            $json['status'] = "success";
-            $json['orders'] = $categories;
+            if (!isset($caregory['store_id'])) $caregory['store_id'] = "";
+            $categories->{$index} = $caregory;
         }
+
+        $json['status'] = "success";
+        $json['categories'] = $categories;
+        
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
